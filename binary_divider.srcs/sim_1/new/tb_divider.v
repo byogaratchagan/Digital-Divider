@@ -1,43 +1,20 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 09/20/2026 09:45:59 AM
-// Design Name: 
-// Module Name: tb_divider
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
-
-`timescale 1ns / 1ps
 
 module tb_divider;
-
-    // Inputs
-    reg [32:0] dividend;
-    reg [32:0] divisor;
+    
+    integer clock_count;
+    reg [31:0] dividend;
+    reg [31:0] divisor;
     reg clk;
     reg start;
     reg reset;
     
     reg stop_clk; 
 
-    // Outputs
-    wire [32:0] q;
+    wire [31:0] q;
     wire done;
 
-    // Instantiate the Unit Under Test (UUT)
-    divider uut (
+    divider dut (
         .dividend(dividend),
         .divisor(divisor),
         .clk(clk),
@@ -47,38 +24,42 @@ module tb_divider;
         .done(done)
     );
 
-    // Clock generation (20 time units period)
-    always #10 begin
+    always #1 begin
         if (done) begin
-            stop_clk = 1; 
+            if (stop_clk == 0) $display("Total clock cycle: %d", clock_count/2);
+            stop_clk = 1;
         end
         if (!stop_clk) begin 
             clk = ~clk;
+            clock_count = clock_count + 1;
         end
     end 
 
     initial begin
-        // Initialize Inputs
-        reset = 0;
+        clock_count = 0;
         stop_clk = 1;
+        clk = 1;
+        reset = 1;
+        start = 0;
+        dividend = 0;
+        divisor = 0;
+        # 1;
+        reset = 0;
         clk = 0;
-        dividend = ~0; 
-        divisor = 8'b11;
+        dividend = ~0;  // try for different values to test 
+        divisor = 8'b111; // try for different value to test.
         start = 1;
-        #10
+        #1
         start = 1;
         clk = 1;
-        #10;
+        #1;
         start = 0;
         clk = 0;
-        #10;
+        #1;
         stop_clk = 0; 
 
-        // Allow the simulation to run for enough clock cycles 
-        // to see the sequential logic and $display outputs
-        #20000;
-        
-        // Stop the simulation
+        #200000;
+
         $finish;
     end
 endmodule
