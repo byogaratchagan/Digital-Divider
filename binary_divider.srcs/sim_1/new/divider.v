@@ -121,11 +121,11 @@ module divider #(
                         partial_q <= partial_q - (1 << shift_amt_reg);
 
                     if (extract_reg >= bn) begin 
-                        an <= ((extract_reg - bn) << (shift_amt_reg > 0 ? shift_amt_reg - 1 : 0)) + lower_an_reg;
+                        an <= ((extract_reg - bn) << (shift_amt_reg > 0 ? shift_amt_reg : 0)) + lower_an_reg;
                         add_sub <= 1'b0;
                     end 
                     else begin
-                        an <= ((bn - extract_reg) << (shift_amt_reg > 0 ? shift_amt_reg - 1 : 0)) + lower_an_reg;
+                        an <= ((bn - extract_reg) << (shift_amt_reg > 0 ? shift_amt_reg : 0)) + lower_an_reg;
                         add_sub <= 1'b1;
                     end
                     
